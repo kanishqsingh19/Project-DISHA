@@ -1,0 +1,26 @@
+{
+  "project": {
+    "name": "Project DISHA",
+    "assistant": "AURA",
+    "version": "0.1.0",
+    "status": "foundation"
+  },
+  "architecture": {
+    "mode": "hybrid",
+    "provider_independent": true,
+    "local_ai": true,
+    "cloud_ai": true,
+    "specialized_ai": true
+  },
+  "interface": {
+    "primary": "orb",
+    "sidebar": false,
+    "default_position": "bottom-right",
+    "user_movable": true,
+    "automatic_size": true
+  },
+  "privacy": {
+    "user_controlled_memory": true,
+    "explicit_permissions": true
+  }
+}
