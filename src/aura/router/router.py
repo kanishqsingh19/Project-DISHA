@@ -31,14 +31,34 @@ class IntelligenceRouter:
     def get_status(self):
         """Return the availability of all AI providers."""
         return self.status.check()
+            
+    def select_provider(self):
+        """Select the first available provider."""
 
-    def route(self, request, provider_name="cloud"):
+        status = self.get_status()
+
+        for provider_name in ["local", "cloud", "specialized"]:
+            if status.get(provider_name):
+                return provider_name
+
+        return None
+        
+    def route(self, request, provider_name=None):
         """
         Route a request to the selected provider.
 
         Automatic provider selection will be added later.
         """
+        
+        if provider_name is None:
+            provider_name = self.select_provider()
 
+        if provider_name is None:
+            return {
+                "status": "no_provider_available",
+                "request": request
+        }
+            
         provider = self.get_provider(provider_name)
 
         if provider is None:
