@@ -9,7 +9,7 @@ from ..providers.local import LocalAIProvider
 from ..providers.cloud import CloudAIProvider
 from ..providers.specialized import SpecializedAIProvider
 from ..providers.status import ProviderStatus
-
+from .decision import RoutingDecision
 
 class IntelligenceRouter:
     """Central routing layer for AURA's hybrid AI architecture."""
@@ -17,7 +17,7 @@ class IntelligenceRouter:
     def __init__(self):
         self.config = AURAConfig()
         self.status = ProviderStatus()
-
+        self.decision = RoutingDecision()
         self.providers = {
             "local": LocalAIProvider(),
             "cloud": CloudAIProvider(),
@@ -33,15 +33,17 @@ class IntelligenceRouter:
         return self.status.check()
             
     def select_provider(self):
-        """Select the first available provider."""
+        """Select the best available provider."""
 
         status = self.get_status()
 
-        for provider_name in ["local", "cloud", "specialized"]:
-            if status.get(provider_name):
-                return provider_name
+        available_providers = [
+            provider_name
+            for provider_name, available in status.items()
+            if available
+        ]
 
-        return None
+        return self.decision.choose(available_providers)
         
     def route(self, request, provider_name=None):
         """
