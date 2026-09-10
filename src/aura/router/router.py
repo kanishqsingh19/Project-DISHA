@@ -4,6 +4,7 @@ AURA Intelligence Router
 Routes user requests to the appropriate AI provider.
 """
 
+from ..config import AURAConfig
 from ..providers.local import LocalAIProvider
 from ..providers.cloud import CloudAIProvider
 from ..providers.specialized import SpecializedAIProvider
@@ -13,6 +14,8 @@ class IntelligenceRouter:
     """Central routing layer for AURA's hybrid AI architecture."""
 
     def __init__(self):
+        self.config = AURAConfig()
+
         self.providers = {
             "local": LocalAIProvider(),
             "cloud": CloudAIProvider(),
@@ -27,8 +30,9 @@ class IntelligenceRouter:
         """
         Route a request to the selected provider.
 
-        Actual provider selection logic will be added later.
+        Automatic provider selection will be added later.
         """
+
         provider = self.get_provider(provider_name)
 
         if provider is None:
@@ -40,5 +44,6 @@ class IntelligenceRouter:
         return {
             "status": "ready",
             "request": request,
-            "provider": provider_name
+            "provider": provider_name,
+            "environment": self.config.environment
         }
