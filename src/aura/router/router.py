@@ -1,22 +1,44 @@
 """
 AURA Intelligence Router
 
-Responsible for selecting the appropriate intelligence
-source for a user request.
+Routes user requests to the appropriate AI provider.
 """
+
+from ..providers.local import LocalAIProvider
+from ..providers.cloud import CloudAIProvider
+from ..providers.specialized import SpecializedAIProvider
 
 
 class IntelligenceRouter:
-    """Routes requests to the appropriate AI capability."""
+    """Central routing layer for AURA's hybrid AI architecture."""
 
-    def route(self, request):
-        """
-        Determine where a request should be handled.
+    def __init__(self):
+        self.providers = {
+            "local": LocalAIProvider(),
+            "cloud": CloudAIProvider(),
+            "specialized": SpecializedAIProvider()
+        }
 
-        Routing logic will be implemented later.
+    def get_provider(self, provider_name):
+        """Return a registered AI provider."""
+        return self.providers.get(provider_name)
+
+    def route(self, request, provider_name="cloud"):
         """
+        Route a request to the selected provider.
+
+        Actual provider selection logic will be added later.
+        """
+        provider = self.get_provider(provider_name)
+
+        if provider is None:
+            return {
+                "status": "error",
+                "message": "Requested AI provider is unavailable."
+            }
+
         return {
-            "status": "pending",
+            "status": "ready",
             "request": request,
-            "provider": None
+            "provider": provider_name
         }
