@@ -8,6 +8,7 @@ from ..config import AURAConfig
 from ..providers.local import LocalAIProvider
 from ..providers.cloud import CloudAIProvider
 from ..providers.specialized import SpecializedAIProvider
+from ..providers.status import ProviderStatus
 
 
 class IntelligenceRouter:
@@ -15,6 +16,7 @@ class IntelligenceRouter:
 
     def __init__(self):
         self.config = AURAConfig()
+        self.status = ProviderStatus()
 
         self.providers = {
             "local": LocalAIProvider(),
@@ -25,6 +27,10 @@ class IntelligenceRouter:
     def get_provider(self, provider_name):
         """Return a registered AI provider."""
         return self.providers.get(provider_name)
+
+    def get_status(self):
+        """Return the availability of all AI providers."""
+        return self.status.check()
 
     def route(self, request, provider_name="cloud"):
         """
@@ -39,6 +45,13 @@ class IntelligenceRouter:
             return {
                 "status": "error",
                 "message": "Requested AI provider is unavailable."
+            }
+
+        if not provider.is_configured():
+            return {
+                "status": "not_configured",
+                "request": request,
+                "provider": provider_name
             }
 
         return {
