@@ -1,17 +1,37 @@
 """
 AURA Cloud AI Provider
 
-Placeholder for future cloud AI integrations.
+Base implementation for future cloud AI integrations.
 """
 
 from .base import AIProvider
+from ..config import AURAConfig
 
 
 class CloudAIProvider(AIProvider):
-    """AI provider for cloud-based AI services."""
+    """Base cloud AI provider."""
+
+    def __init__(self):
+        self.config = AURAConfig()
+
+    def is_configured(self):
+        """Check whether the cloud provider is configured."""
+        return self.config.cloud_configured()
 
     def generate(self, messages):
-        """Generate a response using cloud AI."""
-        raise NotImplementedError(
-            "Cloud AI integration is not implemented yet."
-        )
+        """
+        Generate a response using a cloud AI service.
+
+        Actual API communication will be implemented later.
+        """
+
+        if not self.is_configured():
+            return {
+                "status": "not_configured",
+                "message": "Cloud AI provider is not configured."
+            }
+
+        return {
+            "status": "pending",
+            "message": "Cloud AI integration is not implemented yet."
+        }
