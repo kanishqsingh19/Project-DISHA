@@ -5,6 +5,7 @@ Central orchestration layer for the AURA assistant.
 """
 
 from .conversation.engine import ConversationEngine
+from .conversation.processor import ConversationProcessor
 from .router.router import IntelligenceRouter
 from .security.permissions import PermissionManager
 from .skills.manager import SkillManager
@@ -15,21 +16,12 @@ class AURACore:
 
     def __init__(self):
         self.conversation = ConversationEngine()
+        self.processor = ConversationProcessor() 
         self.router = IntelligenceRouter()
         self.permissions = PermissionManager()
         self.skills = SkillManager()
 
-        def process(self, request):
-        """Process a user request through the AURA foundation."""
+    def process(self, request):
+        """Process a user request through AURA's conversation pipeline."""
 
-        self.conversation.add_message("user", request)
-
-        routing = self.router.route(request)
-
-        response = AURAResponse(
-            content="Request received and routed.",
-            status=routing["status"],
-            provider=routing.get("provider")
-        )
-
-        return response.to_dict()
+        return self.processor.process(request)
