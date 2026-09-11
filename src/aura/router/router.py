@@ -32,7 +32,7 @@ class IntelligenceRouter:
         """Return the availability of all AI providers."""
         return self.status.check()
             
-    def select_provider(self):
+    def select_provider(self, request):
         """Select the best available provider."""
 
         status = self.get_status()
@@ -43,7 +43,7 @@ class IntelligenceRouter:
             if available
         ]
 
-        return self.decision.choose(available_providers)
+        return self.decision.choose(request, available_providers)
         
     def route(self, request, provider_name=None):
         """
@@ -53,7 +53,7 @@ class IntelligenceRouter:
         """
         
         if provider_name is None:
-            provider_name = self.select_provider()
+            provider_name = self.select_provider(request)
 
         if provider_name is None:
             return {
