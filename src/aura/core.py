@@ -8,7 +8,7 @@ from .conversation.engine import ConversationEngine
 from .router.router import IntelligenceRouter
 from .security.permissions import PermissionManager
 from .skills.manager import SkillManager
-
+from .response import AURAResponse
 
 class AURACore:
     """Central coordinator for AURA."""
@@ -19,11 +19,17 @@ class AURACore:
         self.permissions = PermissionManager()
         self.skills = SkillManager()
 
-    def process(self, request):
+        def process(self, request):
         """Process a user request through the AURA foundation."""
+
         self.conversation.add_message("user", request)
 
-        return {
-            "status": "received",
-            "request": request
-        }
+        routing = self.router.route(request)
+
+        response = AURAResponse(
+            content="Request received and routed.",
+            status=routing["status"],
+            provider=routing.get("provider")
+        )
+
+        return response.to_dict()
