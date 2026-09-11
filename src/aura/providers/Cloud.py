@@ -24,7 +24,13 @@ class CloudAIProvider(AIProvider):
 
         Actual API communication will be implemented later.
         """
-
+        
+        if not messages:
+            return {
+                "status": "error",
+                "message": "No messages were provided."
+            }
+            
         if not self.is_configured():
             return {
                 "status": "not_configured",
