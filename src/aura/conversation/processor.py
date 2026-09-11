@@ -7,7 +7,7 @@ and prepares them for the intelligence router.
 
 from .engine import ConversationEngine
 from ..router.router import IntelligenceRouter
-
+from ..response import AURAResponse
 
 class ConversationProcessor:
     """Processes user messages for AURA."""
@@ -18,12 +18,15 @@ class ConversationProcessor:
 
     def process(self, message):
         """Process a user message."""
+
         self.conversation.add_message("user", message)
 
         routing_result = self.router.route(message)
 
-        return {
-            "status": "processed",
-            "message": message,
-            "routing": routing_result
-        }
+        response = AURAResponse(
+            content="Request processed.",
+            status=routing_result["status"],
+            provider=routing_result.get("provider")
+        )
+
+        return response.to_dict()
