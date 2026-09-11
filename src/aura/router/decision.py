@@ -3,7 +3,7 @@ AURA Routing Decision
 
 Provides the foundation for intelligent provider selection.
 """
-
+from .classifier import RequestClassifier
 
 class RoutingDecision:
     """Makes routing decisions for AURA."""
@@ -14,11 +14,30 @@ class RoutingDecision:
             "cloud",
             "specialized"
         ]
+        
+        self.classifier = RequestClassifier()
 
-    def choose(self, available_providers):
-        """Choose the first available provider."""
+        def choose(self, request, available_providers):
+        """Choose a provider based on the request type."""
 
-        for provider in self.providers:
+        request_type = self.classifier.classify(request)
+
+        if request_type == "file_operation":
+            preferred = ["local", "cloud", "specialized"]
+
+        elif request_type == "research":
+            preferred = ["cloud", "specialized", "local"]
+
+        elif request_type == "calculation":
+            preferred = ["local", "cloud", "specialized"]
+
+        elif request_type == "computer_action":
+            preferred = ["local", "cloud", "specialized"]
+
+        else:
+            preferred = ["cloud", "local", "specialized"]
+
+        for provider in preferred:
             if provider in available_providers:
                 return provider
 
