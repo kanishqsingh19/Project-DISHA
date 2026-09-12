@@ -8,6 +8,7 @@ from ..config import AURAConfig
 from ..providers.local import LocalAIProvider
 from ..providers.gemini import GeminiProvider
 from ..providers.specialized import SpecializedAIProvider
+from ..providers.registry import ProviderRegistry
 from ..providers.status import ProviderStatus
 from .decision import RoutingDecision
 
@@ -17,35 +18,33 @@ class IntelligenceRouter:
 
     def __init__(self):
         self.config = AURAConfig()
-        self.status = ProviderStatus()
         self.decision = RoutingDecision()
+        self.registry = ProviderRegistry()
 
-        self.providers = {
-            "local": LocalAIProvider(),
-            "gemini": GeminiProvider(),
-            "specialized": SpecializedAIProvider()
-        }
+        self.registry.register(LocalAIProvider())
+        self.registry.register(GeminiProvider())
+        self.registry.register(SpecializedAIProvider())
 
+        self.status = ProviderStatus(self.registry)
+        
     def get_provider(self, provider_name):
         """Return a registered AI provider."""
-        return self.providers.get(provider_name)
+        return self.registry.get(provider_name)
 
     def get_status(self):
-        """Return the availability of all AI providers."""
+        """Return the availability of all registered providers."""
+        
         return self.status.check()
 
     def select_provider(self, request):
         """Select the best available provider."""
 
-        status = self.get_status()
+        available_providers = self.registry.available_providers()
 
-        available_providers = [
-            provider_name
-            for provider_name, available in status.items()
-            if available
-        ]
-
-        return self.decision.choose(request, available_providers)
+        return self.decision.choose(
+            request,
+            available_providers
+        )
 
     def route(self, request, provider_name=None):
         """Route a request to the selected provider."""
