@@ -5,7 +5,7 @@ Checks the availability of AURA's AI providers.
 """
 
 from .local import LocalAIProvider
-from .cloud import CloudAIProvider
+from .gemini import GeminiProvider
 from .specialized import SpecializedAIProvider
 
 
@@ -15,15 +15,14 @@ class ProviderStatus:
     def __init__(self):
         self.providers = {
             "local": LocalAIProvider(),
-            "cloud": CloudAIProvider(),
+            "gemini": GeminiProvider(),
             "specialized": SpecializedAIProvider()
         }
 
     def check(self):
-        """Return the configuration status of each provider."""
+        """Return the configuration status of each AI provider."""
 
         return {
-            "local": self.providers["local"].is_configured(),
-            "cloud": self.providers["cloud"].is_configured(),
-            "specialized": self.providers["specialized"].is_configured()
+            provider_name: provider.is_configured()
+            for provider_name, provider in self.providers.items()
         }
